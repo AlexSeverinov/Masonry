@@ -9,6 +9,7 @@
 #import "MASConstraintMaker.h"
 #import "MASViewConstraint.h"
 #import "MASCompositeConstraint.h"
+#import "MASConstraint+Private.h"
 #import "MASViewAttribute.h"
 #import "View+MASAdditions.h"
 
@@ -32,6 +33,12 @@
 }
 
 - (NSArray *)install {
+    if (self.removeExisting) {
+        NSArray *installedConstraints = [MASViewConstraint installedConstraintsForView:self.view];
+        for (MASConstraint *constraint in installedConstraints) {
+            [constraint uninstall];
+        }
+    }
     NSArray *constraints = self.constraints.copy;
     for (MASConstraint *constraint in constraints) {
         constraint.updateExisting = self.updateExisting;
@@ -49,14 +56,22 @@
     [self.constraints replaceObjectAtIndex:index withObject:replacementConstraint];
 }
 
-#pragma mark - constraint properties
-
-- (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
+- (MASConstraint *)constraint:(MASConstraint *)constraint addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
     MASViewAttribute *viewAttribute = [[MASViewAttribute alloc] initWithView:self.view layoutAttribute:layoutAttribute];
-    MASViewConstraint *constraint = [[MASViewConstraint alloc] initWithFirstViewAttribute:viewAttribute];
-    constraint.delegate = self;
-    [self.constraints addObject:constraint];
-    return constraint;
+    MASViewConstraint *newConstraint = [[MASViewConstraint alloc] initWithFirstViewAttribute:viewAttribute];
+    if ([constraint isKindOfClass:MASViewConstraint.class]) {
+        //replace with composite constraint
+        NSArray *children = @[constraint, newConstraint];
+        MASCompositeConstraint *compositeConstraint = [[MASCompositeConstraint alloc] initWithChildren:children];
+        compositeConstraint.delegate = self;
+        [self constraint:constraint shouldBeReplacedWithConstraint:compositeConstraint];
+        return compositeConstraint;
+    }
+    if (!constraint) {
+        newConstraint.delegate = self;
+        [self.constraints addObject:newConstraint];
+    }
+    return newConstraint;
 }
 
 - (MASConstraint *)addConstraintWithAttributes:(MASAttribute)attrs {
@@ -91,6 +106,10 @@
 }
 
 #pragma mark - standard Attributes
+
+- (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
+    return [self constraint:nil addConstraintWithLayoutAttribute:layoutAttribute];
+}
 
 - (MASConstraint *)left {
     return [self addConstraintWithLayoutAttribute:NSLayoutAttributeLeft];

@@ -15,9 +15,11 @@
 #import "MASExampleDebuggingView.h"
 #import "MASExampleLabelView.h"
 #import "MASExampleUpdateView.h"
+#import "MASExampleRemakeView.h"
 #import "MASExampleScrollView.h"
 #import "MASExampleLayoutGuideViewController.h"
 #import "MASExampleArrayView.h"
+#import "MASExampleAttributeChainingView.h"
 
 static NSString * const kMASCellReuseIdentifier = @"kMASCellReuseIdentifier";
 
@@ -40,6 +42,8 @@ static NSString * const kMASCellReuseIdentifier = @"kMASCellReuseIdentifier";
                                               viewClass:MASExampleBasicView.class],
         [[MASExampleViewController alloc] initWithTitle:@"Update Constraints"
                                               viewClass:MASExampleUpdateView.class],
+        [[MASExampleViewController alloc] initWithTitle:@"Remake Constraints"
+                                              viewClass:MASExampleRemakeView.class],
         [[MASExampleViewController alloc] initWithTitle:@"Using Constants"
                                               viewClass:MASExampleConstantsView.class],
         [[MASExampleViewController alloc] initWithTitle:@"Composite Edges"
@@ -54,6 +58,8 @@ static NSString * const kMASCellReuseIdentifier = @"kMASCellReuseIdentifier";
                                               viewClass:MASExampleScrollView.class],
         [[MASExampleViewController alloc] initWithTitle:@"Array"
                                               viewClass:MASExampleArrayView.class],
+        [[MASExampleViewController alloc] initWithTitle:@"Attribute Chaining"
+                                              viewClass:MASExampleAttributeChainingView.class],
         [[MASExampleLayoutGuideViewController alloc] init],
     ];
     

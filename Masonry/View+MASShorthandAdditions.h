@@ -31,6 +31,7 @@
 
 - (NSArray *)makeConstraints:(void(^)(MASConstraintMaker *make))block;
 - (NSArray *)updateConstraints:(void(^)(MASConstraintMaker *make))block;
+- (NSArray *)remakeConstraints:(void(^)(MASConstraintMaker *make))block;
 
 @end
 
@@ -52,7 +53,10 @@ MAS_ATTR_FORWARD(height);
 MAS_ATTR_FORWARD(centerX);
 MAS_ATTR_FORWARD(centerY);
 MAS_ATTR_FORWARD(baseline);
-MAS_ATTR_FORWARD(attribute);
+
+- (MASViewAttribute *(^)(NSLayoutAttribute))attribute {
+    return [self mas_attribute];
+}
 
 - (NSArray *)makeConstraints:(void(^)(MASConstraintMaker *))block {
     return [self mas_makeConstraints:block];
@@ -60,6 +64,10 @@ MAS_ATTR_FORWARD(attribute);
 
 - (NSArray *)updateConstraints:(void(^)(MASConstraintMaker *))block {
     return [self mas_updateConstraints:block];
+}
+
+- (NSArray *)remakeConstraints:(void(^)(MASConstraintMaker *))block {
+    return [self mas_remakeConstraints:block];
 }
 
 @end
